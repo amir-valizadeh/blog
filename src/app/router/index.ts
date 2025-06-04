@@ -31,21 +31,9 @@ export enum RouteNames {
     NotFound = 'NotFound',
 }
 
-// Route meta interface
-interface RouteMeta {
-    requiresAuth?: boolean
-    requiresGuest?: boolean
-    title?: string
-    description?: string
-    layout?: 'main' | 'auth' | 'dashboard'
-}
 
-// Extend vue-router types
-declare module 'vue-router' {
-    interface RouteMeta extends RouteMeta {}
-}
 
-const routes: Array<RouteRecordRaw> = [
+const routes: RouteRecordRaw[] = [
     // Main routes
     {
         path: '/',
@@ -88,7 +76,6 @@ const routes: Array<RouteRecordRaw> = [
                     description: 'Create your ArvanCloud blog dashboard account',
                 },
             },
-            // Redirect /auth to /auth/signin
             {
                 path: '',
                 redirect: '/auth/signin',
@@ -96,7 +83,6 @@ const routes: Array<RouteRecordRaw> = [
         ],
     },
 
-    // Dashboard routes
     {
         path: '/dashboard',
         component: DashboardLayout,
@@ -123,7 +109,6 @@ const routes: Array<RouteRecordRaw> = [
         ],
     },
 
-    // Article routes
     {
         path: '/article',
         component: DashboardLayout,
@@ -178,9 +163,8 @@ const router = createRouter({
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {
             return savedPosition
-        } else {
-            return { top: 0 }
         }
+            return { top: 0 }
     },
 })
 
@@ -201,7 +185,7 @@ const redirectToDashboard = () => {
 router.beforeEach((to, from, next) => {
     // Set document title
     if (to.meta.title) {
-        document.title = to.meta.title
+        document.title = `${to.meta.title }`
     }
 
     // Set meta description
@@ -212,7 +196,7 @@ router.beforeEach((to, from, next) => {
             metaDescription.setAttribute('name', 'description')
             document.head.appendChild(metaDescription)
         }
-        metaDescription.setAttribute('content', to.meta.description)
+        metaDescription.setAttribute('content', `${to.meta.description}`)
     }
 
     // Auth guards
@@ -232,27 +216,5 @@ router.beforeEach((to, from, next) => {
 
     next()
 })
-
-// Global after hook for analytics, loading states, etc.
-router.afterEach((to, from) => {
-    // TODO: Add analytics tracking
-    console.log(`Navigation: ${String(from.name) || 'unknown'} → ${String(to.name) || 'unknown'}`)
-})
-
 export default router
 
-// Route helpers for type-safe navigation
-export const useTypedRouter = () => {
-    const { push, replace } = router
-
-    return {
-        goToHome: () => push({ name: RouteNames.Home }),
-        goToSignIn: () => push({ name: RouteNames.SignIn }),
-        goToSignUp: () => push({ name: RouteNames.SignUp }),
-        goToDashboard: () => push({ name: RouteNames.Dashboard }),
-        goToNewArticle: () => push({ name: RouteNames.NewArticle }),
-        goToEditArticle: (slug: string) => push({ name: RouteNames.EditArticle, params: { slug } }),
-        goToArticleDetail: (slug: string) => push({ name: RouteNames.ArticleDetail, params: { slug } }),
-        goToProfile: () => push({ name: RouteNames.Profile }),
-    }
-}
