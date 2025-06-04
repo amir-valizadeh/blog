@@ -5,6 +5,7 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - VITE_HMR_HOST=localhost
+      - VITE_DEBUGGER=false
     volumes:
       - .:/app
       - /app/node_modules

@@ -10,6 +10,7 @@ services:
       - "80:80"
     environment:
       - NODE_ENV=production
+      - VITE_DEBUGGER=false
       - VITE_API_BASE_URL=https://api-3281216083-arvancloud-challenge.apps.ir-central1.arvancaas.ir/api
     restart: unless-stopped
     networks:
