@@ -2,6 +2,7 @@
 
 Modern blog management dashboard with Vue.js, TypeScript, and Docker.
 
+[link to demo](https://blog-one-lilac-38.vercel.app/)
 ## 🎯 Overview
 
 Full-featured blog dashboard for creating, editing, and managing articles. Includes authentication, responsive design, and mobile-first approach.
