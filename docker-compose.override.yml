@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  app-dev:
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - VITE_HMR_HOST=localhost
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.git

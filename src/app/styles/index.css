@@ -1,0 +1,44 @@
+/* src/app/styles/index.css */
+@import "tailwindcss";
+
+/* Tailwind CSS 4.x configuration - Clean and minimal */
+@theme {
+    /* Clean color palette matching your design */
+    --color-teal-50: #f0fdfa;
+    --color-teal-500: #14b8a6;
+    --color-teal-600: #0d9488;
+    --color-teal-700: #0f766e;
+
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-200: #e5e7eb;
+    --color-gray-300: #d1d5db;
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1f2937;
+    --color-gray-900: #111827;
+
+    --color-red-500: #ef4444;
+
+    /* Typography */
+    --font-family-sans: ui-sans-serif, system-ui, sans-serif;
+
+    /* Simple shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+/* Reset any default styles to match your clean design */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family-sans);
+    line-height: 1.5;
+    color: var(--color-gray-900);
+    background-color: var(--color-gray-50);
+}

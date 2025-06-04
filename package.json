@@ -1,0 +1,44 @@
+{
+  "name": "blog-dashboard",
+  "author": "amir-valizadeh",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --noEmit",
+    "lint": "biome lint src/",
+    "lint:fix": "biome lint --write src/",
+    "format": "biome format --write src/",
+    "check": "biome check src/",
+    "check:fix": "biome check --write src/",
+    "docker:dev": "docker-compose up app-dev",
+    "docker:dev:build": "docker-compose build app-dev",
+    "docker:prod": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up app-prod",
+    "docker:prod:build": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml build app-prod",
+    "docker:clean": "docker-compose down && docker system prune -f",
+    "docker:logs": "docker-compose logs -f",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.8",
+    "@tanstack/vue-query": "^5.79.2",
+    "@vueuse/core": "^13.3.0",
+    "pinia": "^3.0.2",
+    "tailwindcss": "^4.1.8",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.15.29",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "@vue/tsconfig": "^0.7.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.0",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vue-tsc": "^2.2.8"
+  }
+}
