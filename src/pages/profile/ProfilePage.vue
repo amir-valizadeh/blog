@@ -1,3 +1,5 @@
+<!--it must complete another time-->
+
 <template>
   <div class="max-w-2xl mx-auto px-4">
     <div class="mb-6">
@@ -115,7 +117,6 @@ const handleUpdate = async () => {
   loading.value = true
   try {
     // TODO: Implement API call
-    console.log('Updating profile:', profile.value)
     await new Promise(resolve => setTimeout(resolve, 1000))
 
     router.push('/dashboard')
