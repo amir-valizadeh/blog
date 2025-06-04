@@ -1,5 +1,5 @@
 // src/shared/api/client.ts
-const API_BASE_URL = 'https://api-3281216083-arvancloud-challenge.apps.ir-central1.arvancaas.ir/api'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 // API Response Types
 export interface User {
@@ -30,13 +30,6 @@ export interface Article {
     author: Profile
 }
 
-export interface Comment {
-    id: number
-    createdAt: string
-    updatedAt: string
-    body: string
-    author: Profile
-}
 
 // Request Types
 export interface LoginRequest {
@@ -90,13 +83,10 @@ export interface TagsResponse {
     tags: string[]
 }
 
-export interface ErrorResponse {
-    errors: Record<string, string[]>
-}
 
 // HTTP Client
 class ApiClient {
-    private baseURL: string
+    private readonly baseURL: string
     private token: string | null = null
 
     constructor(baseURL: string) {
@@ -113,10 +103,6 @@ class ApiClient {
         localStorage.setItem('token', token)
     }
 
-    clearToken() {
-        this.token = null
-        localStorage.removeItem('token')
-    }
 
     private async request<T>(
         endpoint: string,
@@ -133,7 +119,7 @@ class ApiClient {
         }
 
         if (this.token) {
-            (config.headers as Record<string, string>)['Authorization'] = `Token ${this.token}`
+            (config.headers as Record<string, string>).Authorization = `Token ${this.token}`
         }
 
         const response = await fetch(url, config)
@@ -165,9 +151,6 @@ class ApiClient {
         return response
     }
 
-    async getCurrentUser(): Promise<UserResponse> {
-        return this.request<UserResponse>('/user')
-    }
 
     // Articles
     async getArticles(params?: {
@@ -189,18 +172,7 @@ class ApiClient {
         return this.request<ArticlesResponse>(`/articles${query ? `?${query}` : ''}`)
     }
 
-    async getFeedArticles(params?: {
-        limit?: number
-        offset?: number
-    }): Promise<ArticlesResponse> {
-        const searchParams = new URLSearchParams()
 
-        if (params?.limit) searchParams.append('limit', params.limit.toString())
-        if (params?.offset) searchParams.append('offset', params.offset.toString())
-
-        const query = searchParams.toString()
-        return this.request<ArticlesResponse>(`/articles/feed${query ? `?${query}` : ''}`)
-    }
 
     async getArticle(slug: string): Promise<ArticleResponse> {
         return this.request<ArticleResponse>(`/articles/${slug}`)
@@ -230,24 +202,12 @@ class ApiClient {
     async getTags(): Promise<TagsResponse> {
         return this.request<TagsResponse>('/tags')
     }
-
-    // Favorites
-    async favoriteArticle(slug: string): Promise<ArticleResponse> {
-        return this.request<ArticleResponse>(`/articles/${slug}/favorite`, {
-            method: 'POST',
-        })
-    }
-
-    async unfavoriteArticle(slug: string): Promise<ArticleResponse> {
-        return this.request<ArticleResponse>(`/articles/${slug}/favorite`, {
-            method: 'DELETE',
-        })
-    }
 }
 
 export class ApiError extends Error {
     constructor(
         public status: number,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         public data: any
     ) {
         super(`API Error: ${status}`)
@@ -266,6 +226,4 @@ export class ApiError extends Error {
         return this.data?.errors || {}
     }
 }
-
-// Export singleton instance
 export const apiClient = new ApiClient(API_BASE_URL)

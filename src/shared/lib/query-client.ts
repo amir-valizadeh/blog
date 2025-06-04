@@ -31,9 +31,7 @@ export const queryClient = new QueryClient({
 
                 if (error instanceof ApiError) {
                     if (error.isUnauthorized) {
-                        // Handle unauthorized errors globally
                         localStorage.removeItem('token')
-                        // You could also redirect to login page here
                         window.location.href = '/auth/signin'
                     }
                 }
