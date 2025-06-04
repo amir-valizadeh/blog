@@ -92,7 +92,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRegister } from '@/shared/api/hooks'
-import { ApiError } from '@/shared/api/client'
+import type { ApiError } from '@/shared/api/client'
 
 const router = useRouter()
 const usernameError = ref('')
