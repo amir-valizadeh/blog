@@ -1,136 +1,182 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <!-- Left side -->
-          <div class="flex items-center space-x-8">
-            <RouterLink to="/dashboard" class="flex items-center">
-              <h1 class="text-xl font-bold text-gray-900">ArvanCloud</h1>
-            </RouterLink>
-
-            <nav class="hidden md:flex space-x-6">
-              <RouterLink
-                  to="/dashboard"
-                  class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                  :class="{ 'text-primary-600 bg-primary-50': $route.name === 'Dashboard' }"
-              >
-                Dashboard
-              </RouterLink>
-              <RouterLink
-                  to="/article/new"
-                  class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                  :class="{ 'text-primary-600 bg-primary-50': $route.name === 'NewArticle' }"
-              >
-                New Article
-              </RouterLink>
-            </nav>
+  <div class="min-h-screen bg-white">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+      <div class="px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo -->
+          <div class="flex items-center">
+            <h1 class="text-xl font-semibold text-gray-900">Arvancloud Challenge</h1>
           </div>
 
-          <!-- Right side -->
+          <!-- User Info & Actions -->
           <div class="flex items-center space-x-4">
-            <button
-                @click="toggleMobileMenu"
-                class="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            >
-              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-
-            <!-- User menu -->
-            <div class="relative">
-              <button
-                  @click="toggleUserMenu"
-                  class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
-                  <span class="text-white text-sm font-medium">U</span>
-                </div>
-                <span class="hidden md:block text-sm font-medium">User</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              <!-- User dropdown -->
-              <div
-                  v-show="showUserMenu"
-                  class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-200 z-50"
-              >
-                <RouterLink
-                    to="/dashboard/profile"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Profile
-                </RouterLink>
-                <button
-                    @click="handleLogout"
-                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Sign Out
-                </button>
-              </div>
+            <!-- Loading state -->
+            <div v-if="userStore.isLoading" class="flex items-center space-x-2">
+              <div class="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+              <span class="text-sm text-gray-600">Loading...</span>
             </div>
+
+            <!-- User info -->
+            <template v-else-if="userStore.isAuthenticated">
+              <span class="text-sm text-gray-600">Welcome {{ userStore.username }}!</span>
+              <button
+                  @click="handleLogout"
+                  class="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Log out
+              </button>
+            </template>
+
+            <!-- Not authenticated -->
+            <template v-else>
+              <span class="text-sm text-red-600">Not authenticated</span>
+              <button
+                  @click="redirectToLogin"
+                  class="text-sm text-primary-600 hover:text-primary-700 transition-colors"
+              >
+                Sign in
+              </button>
+            </template>
           </div>
         </div>
+      </div>
+    </header>
 
-        <!-- Mobile menu -->
-        <div v-show="showMobileMenu" class="md:hidden py-4 border-t border-gray-200">
+    <!-- Main Layout -->
+    <div class="flex">
+      <!-- Sidebar -->
+      <nav class="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-4rem)] hidden lg:block">
+        <div class="px-6 py-8">
           <div class="space-y-2">
             <RouterLink
                 to="/dashboard"
-                class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors"
+                :class="isActiveRoute('/dashboard')
+                ? 'bg-primary-500 text-white'
+                : 'text-gray-700 hover:bg-gray-100'"
             >
-              Dashboard
+              All Articles
             </RouterLink>
             <RouterLink
                 to="/article/new"
-                class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors"
+                :class="isActiveRoute('/article/new')
+                ? 'bg-primary-500 text-white'
+                : 'text-gray-700 hover:bg-gray-100'"
             >
               New Article
             </RouterLink>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
 
-    <!-- Main content -->
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <RouterView />
-    </main>
+      <!-- Mobile Menu Button -->
+      <div class="lg:hidden fixed bottom-4 right-4 z-50">
+        <button
+            @click="toggleMobileMenu"
+            class="bg-primary-500 text-white p-3 rounded-full shadow-lg hover:bg-primary-600 transition-colors"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Overlay -->
+      <div
+          v-if="showMobileMenu"
+          class="fixed inset-0 z-40 lg:hidden"
+          @click="closeMobileMenu"
+      >
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <nav class="fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 z-50">
+          <div class="px-6 py-8">
+            <div class="flex items-center justify-between mb-8">
+              <h2 class="text-lg font-semibold text-gray-900">Menu</h2>
+              <button
+                  @click="closeMobileMenu"
+                  class="text-gray-400 hover:text-gray-600"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="space-y-2">
+              <RouterLink
+                  to="/dashboard"
+                  @click="closeMobileMenu"
+                  class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors"
+                  :class="isActiveRoute('/dashboard')
+                  ? 'bg-primary-500 text-white'
+                  : 'text-gray-700 hover:bg-gray-100'"
+              >
+                All Articles
+              </RouterLink>
+              <RouterLink
+                  to="/article/new"
+                  @click="closeMobileMenu"
+                  class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors"
+                  :class="isActiveRoute('/article/new')
+                  ? 'bg-primary-500 text-white'
+                  : 'text-gray-700 hover:bg-gray-100'"
+              >
+                New Article
+              </RouterLink>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Main Content -->
+      <main class="flex-1 min-h-[calc(100vh-4rem)]">
+        <div class="px-4 sm:px-6 lg:px-8 py-8">
+          <RouterView />
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '@/app/stores/userStore'
 
+const route = useRoute()
 const router = useRouter()
-const showUserMenu = ref(false)
+const userStore = useUserStore()
 const showMobileMenu = ref(false)
 
-const toggleUserMenu = () => {
-  showUserMenu.value = !showUserMenu.value
-  showMobileMenu.value = false
+// Check authentication and fetch user data on mount
+onMounted(async () => {
+  if (!userStore.isAuthenticated) {
+    await router.push('/auth/signin')
+  }
+})
+
+const isActiveRoute = (path: string) => {
+  if (path === '/dashboard') {
+    return route.path === '/dashboard'
+  }
+  return route.path.startsWith(path)
 }
 
 const toggleMobileMenu = () => {
   showMobileMenu.value = !showMobileMenu.value
-  showUserMenu.value = false
 }
 
-const handleLogout = () => {
-  localStorage.removeItem('token')
-  router.push('/auth/signin')
-}
-
-// Close dropdowns when clicking outside
-const closeDropdowns = () => {
-  showUserMenu.value = false
+const closeMobileMenu = () => {
   showMobileMenu.value = false
 }
 
-// TODO: Add click outside listener
+const handleLogout = () => {
+  userStore.clearUser()
+  router.push('/auth/signin')
+}
+
+const redirectToLogin = () => {
+  router.push('/auth/signin')
+}
 </script>
